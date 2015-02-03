@@ -6,33 +6,55 @@
 -}
 
 module koopa where
-open import Data.Nat
+  open import Data.Nat
+  open import Data.Fin
+  open import Data.List
+  open import Data.Vec renaming (map to vmap; lookup to vlookup)
 
-data Color : Set where
-  Green : Color
-  Red : Color
+  module Matrix where
+    data Matrix (A : Set) : ℕ → ℕ → Set where
+      Mat : {w h : ℕ} → Vec (Vec A w) h → Matrix A w h
 
-data KoopaTroopa Color : Set where
-  _KT : Color → KoopaTroopa Color
+    lookup : ∀ {w h} {A : Set} → Fin h → Fin w → Matrix A w h → A
+    lookup row column (Mat rows) = vlookup column (vlookup row rows)
 
-record Position : Set where
-  constructor pos
-  field
-    x : ℕ
-    y : ℕ
+  data Color : Set where
+    Green : Color
+    Red : Color
 
-data _follows_ : Position → Position → Set where
-  still : ∀ {p} → p follows p
-  next  : ∀ {x y} → pos (suc x) y follows pos x y
-  back  : ∀ {x y} → pos x y follows pos (suc x) y
-  -- jump  : ∀ {x y} → pos x (suc y) follows pos x y
-  fall  : ∀ {x y} → pos x y follows pos x (suc y)
+  data KoopaTroopa Color : Set where
+    _KT : Color → KoopaTroopa Color
+
+  data Material : Set where
+    gas    : Material
+    -- liquid : Material
+    solid  : Material
+
+  record Position : Set where
+    constructor pos
+    field
+      x   : ℕ
+      y   : ℕ
+      mat : Material
+
+  data _follows_ : Position → Position → Set where
+    stay  : ∀ {p} → p follows p
+    next  : ∀ {x y mat} → pos (suc x) y mat follows pos x y mat
+    back  : ∀ {x y mat} → pos x y mat follows pos (suc x) y mat
+    -- jump  : ∀ {x y mat} → pos x (suc y) mat follows pos x y mat
+    fall  : ∀ {x y mat} → pos x y mat follows pos x (suc y) mat
 
 
-data Path (Koopa : KoopaTroopa Color) : Position → Position → Set where
-  []  : ∀ {p} → Path Koopa p p
-  _↠[_]_ : {q r : Position} → (p : Position) → q follows p
-           → (qs : Path Koopa q r) → Path Koopa p r
+  infixr 5 _↠⟨_⟩_
+  data Path (Koopa : KoopaTroopa Color) : Position → Position → Set where
+    []  : ∀ {p} → Path Koopa p p
+    _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p
+                → (qs : Path Koopa q r) → Path Koopa p r
 
-ex_path : Path (Red KT) (pos 0 0) (pos 0 0)
-ex_path = pos 0 0 ↠[ next ] (pos 1 0 ↠[ back ] [])
+  example_level : Matrix Position 
+  example_level = []
+
+  ex_path : Path (Red KT) (pos 0 0 solid) (pos 0 0 solid)
+  ex_path = pos 0 0 solid ↠⟨ next ⟩
+            pos 1 0 solid ↠⟨ back ⟩
+            pos 0 0 solid ↠⟨ stay ⟩ []
