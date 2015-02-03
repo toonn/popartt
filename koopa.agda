@@ -7,7 +7,7 @@
 
 module koopa where
   open import Data.Nat
-  open import Data.Fin
+  open import Data.Fin renaming (_+_ to _F+_)
   open import Data.List
   open import Data.Vec renaming (map to vmap; lookup to vlookup)
 
@@ -17,6 +17,7 @@ module koopa where
 
     lookup : ∀ {w h} {A : Set} → Fin h → Fin w → Matrix A w h → A
     lookup row column (Mat rows) = vlookup column (vlookup row rows)
+  open Matrix
 
   data Color : Set where
     Green : Color
@@ -51,10 +52,33 @@ module koopa where
     _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p
                 → (qs : Path Koopa q r) → Path Koopa p r
 
-  example_level : Matrix Position 
-  example_level = []
-
   ex_path : Path (Red KT) (pos 0 0 solid) (pos 0 0 solid)
   ex_path = pos 0 0 solid ↠⟨ next ⟩
             pos 1 0 solid ↠⟨ back ⟩
             pos 0 0 solid ↠⟨ stay ⟩ []
+
+  matToPosVec : {n : ℕ} → Vec Material n → ℕ → ℕ → Vec Position n
+  matToPosVec []           _ _ = []
+  matToPosVec (mat ∷ mats) x y = pos x y mat ∷ matToPosVec mats (x + 1) y
+
+  matToPosVecs : {w h : ℕ} → Vec (Vec Material w) h → Vec (Vec Position w) h
+  matToPosVecs []                   = []
+  matToPosVecs (_∷_ {y} mats matss) = matToPosVec mats 0 y ∷ matToPosVecs matss
+
+  matToMat : {w h : ℕ} → Vec (Vec Material w) h → Matrix Position w h
+  matToMat matss = Mat (matToPosVecs matss)
+
+  □ : Material
+  □ = gas
+  ■ : Material
+  ■ = solid
+  example_level : Matrix Position 10 7
+  example_level = Mat (matToPosVecs (
+    (□ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ []) ∷ 
+    (□ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ ■ ∷ ■ ∷ ■ ∷ □ ∷ []) ∷ 
+    (□ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ []) ∷ 
+    (□ ∷ □ ∷ □ ∷ ■ ∷ ■ ∷ ■ ∷ □ ∷ □ ∷ □ ∷ □ ∷ []) ∷ 
+    (□ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ []) ∷ 
+    (■ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ ■ ∷ []) ∷ 
+    (■ ∷ ■ ∷ ■ ∷ ■ ∷ ■ ∷ □ ∷ □ ∷ ■ ∷ ■ ∷ ■ ∷ []) ∷ []))
+
