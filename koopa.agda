@@ -1,4 +1,3 @@
-
 {-
 
     Verified Koopa Troopa Movement
@@ -8,9 +7,12 @@
 
 module koopa where
   open import Data.Nat
-  open import Data.Fin renaming (_+_ to _F+_)
-  open import Data.List
-  open import Data.Vec renaming (map to vmap; lookup to vlookup)
+  open import Data.Fin renaming (_+_ to _F+_; _<_ to _F<_; suc to fsuc;
+    zero to fzero)
+  open import Data.Vec renaming (map to vmap; lookup to vlookup;
+                                     replicate to vreplicate)
+  open import Data.Unit
+  open import Data.Empty
 
   module Matrix where
     data Matrix (A : Set) : ℕ → ℕ → Set where
@@ -24,8 +26,8 @@ module koopa where
     Green : Color
     Red : Color
 
-  data KoopaTroopa Color : Set where
-    _KT : Color → KoopaTroopa Color
+  data KoopaTroopa : Color → Set where
+    _KT : (c : Color) → KoopaTroopa c
 
   data Material : Set where
     gas    : Material
@@ -49,24 +51,25 @@ module koopa where
     <red>   : ∀ {c} → c c> Low
     <green> : Green c> High
 
-  data _follows_ : Position → Position → Set where
-    stay  : ∀ {x y} → pos x y gas Low follows pos x y gas Low
+  data _follows_⟨_⟩ : Position → Position → Color → Set where
+    stay  : ∀ {c x y} → pos x y gas Low follows pos x y gas Low ⟨ c ⟩
     next  : ∀ {c cl x y}{{_ : c c> cl}} →
-            pos (suc x) y gas Low follows pos x y gas cl
+            pos (suc x) y gas cl follows pos x y gas Low ⟨ c ⟩
     back  : ∀ {c cl x y}{{_ : c c> cl}} →
-            pos x y gas Low follows pos (suc x) y gas cl
-    -- jump  : ∀ {x y} → pos x (suc y) gas High follows pos x y gas Low
-    fall  : ∀ {cl x y} → pos x y gas cl follows pos x (suc y) gas High
+            pos x y gas cl follows pos (suc x) y gas Low ⟨ c ⟩
+    -- jump  : ∀ {c x y} → pos x (suc y) gas High follows pos x y gas Low ⟨ c ⟩
+    fall  : ∀ {c cl x y} → pos x y gas cl follows pos x (suc y) gas High ⟨ c ⟩
 
 
   infixr 5 _↠⟨_⟩_
-  data Path (Koopa : KoopaTroopa Color) : Position → Position → Set where
+  data Path {c : Color} (Koopa : KoopaTroopa c) :
+       Position → Position → Set where
     []  : ∀ {p} → Path Koopa p p
-    _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p
+    _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p ⟨ c ⟩
                 → (qs : Path Koopa q r) → Path Koopa p r
 
   ex_path : Path (Red KT) (pos 0 0 gas Low) (pos 0 0 gas Low)
-  ex_path = pos 0 0 gas Low ↠⟨ next {Red} ⟩
+  ex_path = pos 0 0 gas Low ↠⟨ next ⟩
             pos 1 0 gas Low ↠⟨ back ⟩
             pos 0 0 gas Low ↠⟨ stay ⟩ []
 
@@ -83,11 +86,16 @@ module koopa where
         cl = clearance mat under
 
   matToPosVecs : {w h : ℕ} → Vec (Vec Material w) h → Vec (Vec Position w) h
-  matToPosVecs []                   = []
-  matToPosVecs (_∷_ {y} mats matss) = matToPosVec mats mats 0 y ∷ matToPosVecs matss
+  matToPosVecs [] = []
+  matToPosVecs (_∷_ {y} mats matss) =
+    matToPosVec mats (unders matss gas) 0 y ∷ matToPosVecs matss
+    where
+      unders : ∀ {m n ℓ}{A : Set ℓ} → Vec (Vec A m) n → A → Vec A m
+      unders [] fallback = vreplicate fallback
+      unders (us ∷ _) _ = us
 
   matsToMat : {w h : ℕ} → Vec (Vec Material w) h → Matrix Position w h
-  matsToMat matss = Mat (matToPosVecs matss)
+  matsToMat matss = Mat (reverse (matToPosVecs matss))
 
   □ : Material
   □ = gas
@@ -102,3 +110,42 @@ module koopa where
     (□ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ []) ∷ 
     (■ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ □ ∷ ■ ∷ []) ∷ 
     (■ ∷ ■ ∷ ■ ∷ ■ ∷ ■ ∷ □ ∷ □ ∷ ■ ∷ ■ ∷ ■ ∷ []) ∷ [])
+
+  _<'_ : ℕ → ℕ → Set
+  m <' zero = ⊥
+  zero <' suc n = ⊤
+  suc m <' suc n = m <' n
+
+  fromNat : ∀ {n}(k : ℕ){_ : k <' n} → Fin n
+  fromNat {zero} k {}
+  fromNat {suc n} zero = fzero
+  fromNat {suc n} (suc k) {p} = fsuc (fromNat k {p})
+ 
+  f : ∀ {n}(k : ℕ){_ : k <' n} → Fin n
+  f = fromNat
+
+  p : (x : Fin 10) → (y : Fin 7) → Position
+  p x y = lookup y x example_level
+
+  red_path_one : Path (Red KT) (p (f 7) (f 6)) (p (f 8) (f 6))
+  red_path_one = p (f 7) (f 6) ↠⟨ back ⟩
+                 p (f 6) (f 6) ↠⟨ next ⟩
+                 p (f 7) (f 6) ↠⟨ next ⟩
+                 p (f 8) (f 6) ↠⟨ stay ⟩ []
+
+  red_path_two : Path (Red KT) (p (f 2) (f 1)) (p (f 3) (f 1))
+  red_path_two = p (f 2) (f 1) ↠⟨ back ⟩
+                 p (f 1) (f 1) ↠⟨ next ⟩
+                 p (f 2) (f 1) ↠⟨ next ⟩
+                 p (f 3) (f 1) ↠⟨ next ⟩
+                 p (f 4) (f 1) ↠⟨ back ⟩
+                 p (f 3) (f 1) ↠⟨ stay ⟩
+                 []
+
+  red_nopath_one : Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+  red_nopath_one = p (f 1) (f 1) ↠⟨ back ⟩
+                   p (f 0) (f 1) ↠⟨ stay ⟩
+                   []
+
+  red_nopath_two : Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+  red_nopath_two = p (f 1) (f 1) ↠⟨ back ⟩ []
