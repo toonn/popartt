@@ -91,7 +91,36 @@ van de oplossing is [#github]_:
       _↠〈_〉_ : {q r : Position} → (p : Position) → q follows p 〈 c 〉
                  → (qs : Path Koopa q r) → Path Koopa p r
 
-.. Code uitleggen, voorbeelden laten zien, klaar is kees?
+Dit is een data declaratie, meer bepaald van een generalized algebraic
+data type, dit is een manier om een nieuw type te specifiëren [#adt]_.
+Na het woord *data* geven we de naam van het type, in dit geval *Path*,
+daarna komen een aantal parameters.
+Een algebraic data type lijkt op een een functie op het niveau van types,
+dat is hier duidelijk te zien.
+Na de dubbelepunt komt het type van het voorgaande stuk, hier het functie type
+*Position → Position → Set*, dus *Path* geparametriseerd met een *Color* en
+een *KoopaTroopa* is een functie die twee *Position* argumenten nodig heeft
+en dan een resultaat van het type *Set* geeft.
+*Set* is in Agda het type van types [#kind]_, dus het resultaat van *Path* met
+de juiste argumenten is een type, een concreet voorbeeld:
+*Path Red KT (0,0) (1, 0)*, waar *(0,0)* en *(1,0)* representaties zijn van
+posities, zou een pad zijn voor een rode Koopa Troopa van *(0,0)* naar *(1,0)*.
+
+Een type is gewoonlijk niet nuttig als we er geen elementen van kunnen maken,
+daarom zijn er meestal een aantal constructors voor gedefinieerd.
+*[]* maakt een leeg pad aan voor een Koopa Troopa van een positie [#positie]_
+naar diezelfde positie, een pad zonder stappen leid naar nergens.
+De andere constructor heeft als (expliciete) argumenten: een positie,
+een bewijs dat de eerste positie van een pad mag volgen op die positie voor
+een bepaalde kleur van Koopa Troopa en een pad vertrekkend van de juiste
+positie.
+Het lege pad past aan het einde van eender welk ander pad dankzij het
+impliciete positie-argument.
+Omdat dit de enige manieren zijn om een pad op te stellen, weten we dat zolang
+de *follows* relatie de juiste beperkingen oplegt, een rode Koopa Troopa nooit
+van een platform af zal springen.
+
+.. voorbeelden laten zien, klaar is kees?
 
 
 .. rubric:: Footnotes
@@ -111,3 +140,18 @@ van de oplossing is [#github]_:
 .. [#github] Voor zij die willen nagaan dat wat ik hier vertel geen gebakken
              lucht is; de code zowel voor het voorbeeld als voor dit artikel is
              hier beschikbaar: https://github.com/toonn/popartt
+.. [#adt] Haskell heeft algebraic data types, dit is een veralgemening daarvan.
+.. [#kind] In type theory is dit normaal gekend als *kind* (* in Haskell).
+           Als kind het type van een type is, wat is dan het type van een kind?
+           In Agda is het type van een type *Set*, wat een afkorting is voor
+           *|Set0|*, het type van *Set* is *|Set1|*.
+           Dit kan natuurlijk niet oneindig ver doorgaan maar dit zou ons te
+           ver leiden.
+.. [#positie] Deze positie wordt impliciet gevonden uit het gebruik van de *[]*
+              constructor; accolades worden in Agda gebruikt om impliciete
+              argumenten aan te geven.
+              Op de Agda wiki is hier meer over te vinden:
+              http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Docs.ImplicitArguments
+
+.. |Set0| replace:: Set\ :sub:`0`
+.. |Set1| replace:: Set\ :sub:`1`
