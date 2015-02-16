@@ -1,6 +1,6 @@
 {-
 
-    Verified KoopaTroopa Movement
+    Verified Koopa Troopa Movement
              Toon Nolten
 
 -}
