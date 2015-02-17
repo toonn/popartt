@@ -1,6 +1,6 @@
-======================================
-    Dependently Typed KoopaTroopas
-======================================
+=======================================
+    Dependently Typed Koopa Troopas
+=======================================
 
 Wat zijn dependent types?
 =========================
@@ -32,13 +32,14 @@ opleggen dat ze enkel werkt op lijsten met een lengte verschillend van 0,
 dit soort lijsten noemt men gewoonlijk vectors.
 Dit voorbeeld is hieronder uitgewerkt in de taal Agda [#agda]_:
 
-.. code-block:: agda
-    data Vec (A : Set) : ℕ → Set where
-      []  : Vec A zero
-      _⸬_ : {n : ℕ} → A → Vec A n → Vec A (suc n)
+    .. code-block:: agda
     
-    head : {A : Set}{n : ℕ} → Vec A (suc n) → A
-    head (x ⸬ xs) = x 
+        data Vec (A : Set) : ℕ → Set where
+          []  : Vec A zero
+          _⸬_ : {n : ℕ} → A → Vec A n → Vec A (suc n)
+        
+        head : {A : Set}{n : ℕ} → Vec A (suc n) → A
+        head (x ⸬ xs) = x 
 
 Zoals we kunnen zien in het type van de head functie, werkt deze voor eender
 welke vector met lengte *suc n*, de opvolger van een willekeurig natuurlijk
@@ -79,12 +80,13 @@ af zal lopen.
 Ik laat enkel de code voor het pad type zien omdat dit het belangrijkste deel
 van de oplossing is [#github]_:
 
-.. code-block:: agda
-    data Path {c : Color} (Koopa : KoopaTroopa c) :
-         Position → Position → Set where
-      []     : ∀ {p} → Path Koopa p p
-      _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p ⟨ c ⟩
-                 → (qs : Path Koopa q r) → Path Koopa p r
+    .. code-block:: agda
+
+        data Path {c : Color} (Koopa : KoopaTroopa c) :
+             Position → Position → Set where
+          []     : ∀ {p} → Path Koopa p p
+          _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p ⟨ c ⟩
+                     → (qs : Path Koopa q r) → Path Koopa p r
 
 Dit is een data declaratie, meer bepaald van een generalized algebraic
 data type, dit is een manier om een nieuw type te specifiëren [#adt]_.
@@ -123,7 +125,7 @@ bewegingen grafisch weergegeven.
 
 .. figure:: koopatroopa-red.png
 
-Bewegingen voor een rode Koopa Troopa
+    Bewegingen voor een rode Koopa Troopa
 
 Het eerste pad gaat van positie *(7,6)* naar *(8,6)* en komt
 ongeveer overeen met het getekende pad rechtsboven in figuur :num:`fig-red`.
@@ -134,36 +136,41 @@ optreden).
 Het tweede pad komt ongeveer overeen met het pad linksonder in
 figuur :num:`fig-red`.
 
-.. code-block:: agda
-    red_path_one : Path (Red KT) (p (f 7) (f 6)) (p (f 8) (f 6))
-    red_path_one = p (f 7) (f 6) ↠⟨ back ⟩
-                   p (f 6) (f 6) ↠⟨ next ⟩
-                   p (f 7) (f 6) ↠⟨ next ⟩
-                   p (f 8) (f 6) ↠⟨ stay ⟩ []
-
-    red_path_two : Path (Red KT) (p (f 2) (f 1)) (p (f 3) (f 1))
-    red_path_two = p (f 2) (f 1) ↠⟨ back ⟩
-                   p (f 1) (f 1) ↠⟨ next ⟩
-                   p (f 2) (f 1) ↠⟨ next ⟩
-                   p (f 3) (f 1) ↠⟨ next ⟩
-                   p (f 4) (f 1) ↠⟨ back ⟩
-                   p (f 3) (f 1) ↠⟨ stay ⟩
-                   []
+    .. code-block:: agda
+    
+        red_path_one : Path (Red KT) (p (f 7) (f 6)) (p (f 8) (f 6))
+        red_path_one = p (f 7) (f 6) ↠⟨ back ⟩
+                       p (f 6) (f 6) ↠⟨ next ⟩
+                       p (f 7) (f 6) ↠⟨ next ⟩
+                       p (f 8) (f 6) ↠⟨ stay ⟩ []
+    
+        red_path_two : Path (Red KT) (p (f 2) (f 1)) (p (f 3) (f 1))
+        red_path_two = p (f 2) (f 1) ↠⟨ back ⟩
+                       p (f 1) (f 1) ↠⟨ next ⟩
+                       p (f 2) (f 1) ↠⟨ next ⟩
+                       p (f 3) (f 1) ↠⟨ next ⟩
+                       p (f 4) (f 1) ↠⟨ back ⟩
+                       p (f 3) (f 1) ↠⟨ stay ⟩
+                       []
 
 De paden die kloppen zijn eigenlijk niet zo interessant in dit geval omdat we
 verwachten dat die voldoen aan hun types.
 Laten we dus eens kijken naar paden die niet kloppen.
 
-.. code-block:: agda
-    red_nopath_one : Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
-    red_nopath_one = p (f 1) (f 1) ↠⟨ back ⟩
-                     p (f 0) (f 1) ↠⟨ stay ⟩
-                     []
+    .. code-block:: agda
+
+        red_nopath_one : Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+        red_nopath_one = p (f 1) (f 1) ↠⟨ back ⟩
+                         p (f 0) (f 1) ↠⟨ stay ⟩
+                         []
 
 Als we dit proberen type checken, krijgen we de volgende fout:
-    | gas != solid of type Material
-    | when checking that the expression stay has type
-    | pos 0 (suc zero) gas Low follows p (f 0) (f 1) ⟨ Red ⟩
+
+    .. code-block:: agda
+    
+        gas != solid of type Material
+        when checking that the expression stay has type
+        pos 0 (suc zero) gas Low follows p (f 0) (f 1) ⟨ Red ⟩
 
 De type checker geeft dus een fout aan, de positie *(0,1)* is *solid*, het is
 namelijk een muur, en een Koopa Troopa kan enkel *stay* uitvoeren op een
@@ -177,45 +184,54 @@ als het ware van achter naar voor opgesteld (en gecontroleerd), vandaar dat
 de fout "te laat" gevonden wordt.
 Hier is hetzelfde pad herhaald waar de eindpositie impliciet is:
 
-.. code-block:: agda
-    red_nopath_two : Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
-    red_nopath_two = p (f 1) (f 1) ↠⟨ back ⟩ []
+    .. code-block:: agda
+
+        red_nopath_two : Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+        red_nopath_two = p (f 1) (f 1) ↠⟨ back ⟩ []
 
 Deze keer maakt de fout wel duidelijk dat een rode Koopa Troopa geen muur in
 kan lopen, in figuur :num:`fig-red` is dit aangeduid met een ⓶:
-    | gas != solid of type Material
-    | when checking that the expression p (f 1) (f 1) ↠⟨ back ⟩ [] has
-    | type Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+
+    .. code-block:: agda
+    
+        gas != solid of type Material
+        when checking that the expression p (f 1) (f 1) ↠⟨ back ⟩ [] has
+        type Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
 
 Nu de belangrijkste test nog, een rode Koopa Troopa zou niet van een platform
 af mogen kunnen lopen, in figuur :num:`fig-red` is dit aangeduid met een
 ⓵:
 
-.. code-block:: agda
-    red_nopath_three : Path (Red KT) (p (f 4) (f 1)) (p (f 5) (f 1))
-    red_nopath_three = p (f 4) (f 1) ↠⟨ next ⟩ []
+    .. code-block:: agda
+
+        red_nopath_three : Path (Red KT) (p (f 4) (f 1)) (p (f 5) (f 1))
+        red_nopath_three = p (f 4) (f 1) ↠⟨ next ⟩ []
 
 De fout geeft nu aan dat een rode Koopa Troopa geen "toestemming" heeft om van
 een platform af te stappen:
-    | Low != High of type Clearance
-    | when checking that the expression p (f 4) (f 1) ↠⟨ next ⟩ [] has
-    | type Path (Red KT) (p (f 4) (f 1)) (p (f 5) (f 1))
+
+    .. code-block:: agda
+    
+        Low != High of type Clearance
+        when checking that the expression p (f 4) (f 1) ↠⟨ next ⟩ [] has
+        type Path (Red KT) (p (f 4) (f 1)) (p (f 5) (f 1))
 
 .. _fig-green:
 
 .. figure:: koopatroopa-green.png
 
-Bewegingen voor een Groene Koopa Troopa
+    Bewegingen voor een Groene Koopa Troopa
 
 Er zijn ook nog een aantal voorbeeldpaden met groene Koopa Troopas.
 Dit eerste pad is hetzelfde als het eerste pad voor rode Koopa Troopas:
 
-.. code-block:: agda
-    green_path_one : Path (Green KT) (p (f 7) (f 6)) (p (f 8) (f 6))
-    green_path_one = p (f 7) (f 6) ↠⟨ back ⟩
-                     p (f 6) (f 6) ↠⟨ next ⟩
-                     p (f 7) (f 6) ↠⟨ next ⟩
-                     p (f 8) (f 6) ↠⟨ stay ⟩ []
+    .. code-block:: agda
+
+        green_path_one : Path (Green KT) (p (f 7) (f 6)) (p (f 8) (f 6))
+        green_path_one = p (f 7) (f 6) ↠⟨ back ⟩
+                         p (f 6) (f 6) ↠⟨ next ⟩
+                         p (f 7) (f 6) ↠⟨ next ⟩
+                         p (f 8) (f 6) ↠⟨ stay ⟩ []
 
 Zij die het spel kennen, zullen hier misschien vreemd van opkijken want een
 Koopa Troopa mag eigenlijk niet terugdraaien zolang hij geen obstakel tegenkomt.
@@ -227,38 +243,43 @@ we willen immers niet dat alle Koopa Troopas verhinderd worden om van platforms
 af te springen, dit is het pad op figuur :num:`fig-green`, op de posities
 aangeduid met een ⓵ springt de Koopa Troopa van een platform af:
 
-.. code-block:: agda
-    green_path_two : Path (Green KT) (p (f 7) (f 6)) (p (f 5) (f 0))
-    green_path_two = p (f 7) (f 6) ↠⟨ back ⟩
-                     p (f 6) (f 6) ↠⟨ back ⟩
-                     p (f 5) (f 6) ↠⟨ fall ⟩
-                     p (f 5) (f 5) ↠⟨ fall ⟩
-                     p (f 5) (f 4) ↠⟨ back ⟩
-                     p (f 4) (f 4) ↠⟨ back ⟩
-                     p (f 3) (f 4) ↠⟨ back ⟩
-                     p (f 2) (f 4) ↠⟨ fall ⟩
-                     p (f 2) (f 3) ↠⟨ fall ⟩
-                     p (f 2) (f 2) ↠⟨ fall ⟩
-                     p (f 2) (f 1) ↠⟨ back ⟩
-                     p (f 1) (f 1) ↠⟨ next ⟩
-                     p (f 2) (f 1) ↠⟨ next ⟩
-                     p (f 3) (f 1) ↠⟨ next ⟩
-                     p (f 4) (f 1) ↠⟨ next ⟩
-                     p (f 5) (f 1) ↠⟨ fall ⟩
-                     []
+    .. code-block:: agda
+    
+        green_path_two : Path (Green KT) (p (f 7) (f 6)) (p (f 5) (f 0))
+        green_path_two = p (f 7) (f 6) ↠⟨ back ⟩
+                         p (f 6) (f 6) ↠⟨ back ⟩
+                         p (f 5) (f 6) ↠⟨ fall ⟩
+                         p (f 5) (f 5) ↠⟨ fall ⟩
+                         p (f 5) (f 4) ↠⟨ back ⟩
+                         p (f 4) (f 4) ↠⟨ back ⟩
+                         p (f 3) (f 4) ↠⟨ back ⟩
+                         p (f 2) (f 4) ↠⟨ fall ⟩
+                         p (f 2) (f 3) ↠⟨ fall ⟩
+                         p (f 2) (f 2) ↠⟨ fall ⟩
+                         p (f 2) (f 1) ↠⟨ back ⟩
+                         p (f 1) (f 1) ↠⟨ next ⟩
+                         p (f 2) (f 1) ↠⟨ next ⟩
+                         p (f 3) (f 1) ↠⟨ next ⟩
+                         p (f 4) (f 1) ↠⟨ next ⟩
+                         p (f 5) (f 1) ↠⟨ fall ⟩
+                         []
 
 Een groene Koopa Troopa kan dus wel degelijk van platforms afspringen.
 Het laatste pad laat nog zien dat groene Koopa Troopas nog steeds niet in
 muren kunnen lopen, in figuur :num:`fig-green` aangeduid met een ⓶:
 
-.. code-block:: agda
-    green_nopath_one : Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
-    green_nopath_one = p (f 1) (f 1) ↠⟨ back ⟩ []
+    .. code-block:: agda
+
+        green_nopath_one : Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+        green_nopath_one = p (f 1) (f 1) ↠⟨ back ⟩ []
 
 Met als fout:
-    | gas != solid of type Material
-    | when checking that the expression p (f 1) (f 1) ↠⟨ back ⟩ [] has
-    | type Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
+
+    .. code-block:: agda
+    
+        gas != solid of type Material
+        when checking that the expression p (f 1) (f 1) ↠⟨ back ⟩ [] has
+        type Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
 
 --------------------
 
