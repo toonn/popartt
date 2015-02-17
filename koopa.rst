@@ -121,7 +121,7 @@ bewegingen grafisch weergegeven.
 
 .. _fig-red:
 
-.. figure:: koopatroopa-red.pdf
+.. figure:: koopatroopa-red.png
 
 Bewegingen voor een rode Koopa Troopa
 
@@ -203,7 +203,7 @@ een platform af te stappen:
 
 .. _fig-green:
 
-.. figure:: koopatroopa-green.pdf
+.. figure:: koopatroopa-green.png
 
 Bewegingen voor een Groene Koopa Troopa
 
