@@ -124,17 +124,17 @@ Om aan te tonen dat dit werkt, heb ik een aantal voorbeeldpaden opgesteld.
 In figuren :num:`fig-red` en :num:`fig-green` zijn de legale en illegale
 bewegingen grafisch weergegeven.
 
-    .. _fig-red:
-    
-    .. figure:: koopatroopa-red.pdf
-    
-    Bewegingen voor een rode Koopa Troopa
-    
-    .. _fig-green:
-    
-    .. figure:: koopatroopa-green.pdf
-    
-    Bewegingen voor een Groene Koopa Troopa
+.. _fig-red:
+
+.. figure:: koopatroopa-red.pdf
+
+Bewegingen voor een rode Koopa Troopa
+
+.. _fig-green:
+
+.. figure:: koopatroopa-green.pdf
+
+Bewegingen voor een Groene Koopa Troopa
 
 Het eerste pad gaat van positie *(7,6)* naar *(8,6)* en komt
 ongeveer overeen met het getekende pad rechtsboven in figuur :num:`fig-red`.
@@ -214,7 +214,7 @@ een platform af te stappen:
 Er zijn ook nog een aantal voorbeeldpaden met groene Koopa Troopas.
 Dit eerste pad is hetzelfde als het eerste pad voor rode Koopa Troopas:
 
-..code-block:: agda
+.. code-block:: agda
     green_path_one : Path (Green KT) (p (f 7) (f 6)) (p (f 8) (f 6))
     green_path_one = p (f 7) (f 6) ↠⟨ back ⟩
                      p (f 6) (f 6) ↠⟨ next ⟩
@@ -230,7 +230,7 @@ Nu moeten we nog nakijken of ons type wel echt doet wat het moet doen,
 we willen immers niet dat alle Koopa Troopas verhinderd worden om van platforms
 af te springen:
 
-..code-block:: agda
+.. code-block:: agda
     green_path_two : Path (Green KT) (p (f 7) (f 6)) (p (f 5) (f 0))
     green_path_two = p (f 7) (f 6) ↠⟨ back ⟩
                      p (f 6) (f 6) ↠⟨ back ⟩
@@ -254,7 +254,7 @@ Een groene Koopa Troopa kan dus wel degelijk van platforms afspringen.
 Het laatste pad laat nog zien dat groene Koopa Troopas nog steeds niet in
 muren kunnen lopen:
 
-..code-block:: agda
+.. code-block:: agda
     green_nopath_one : Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
     green_nopath_one = p (f 1) (f 1) ↠⟨ back ⟩ []
 
