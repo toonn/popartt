@@ -225,7 +225,7 @@ voor een pad moeten opnemen natuurlijk.
 Nu moeten we nog nakijken of ons type wel echt doet wat het moet doen,
 we willen immers niet dat alle Koopa Troopas verhinderd worden om van platforms
 af te springen, dit is het pad op figuur :num:`fig-green`, op de posities
-aangeduid met een omcirkelde *1* springt de Koopa Troopa van een platform af:
+aangeduid met een ⓵ springt de Koopa Troopa van een platform af:
 
 .. code-block:: agda
     green_path_two : Path (Green KT) (p (f 7) (f 6)) (p (f 5) (f 0))
