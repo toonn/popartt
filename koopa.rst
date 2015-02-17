@@ -2,11 +2,6 @@
     Dependently Typed KoopaTroopas
 ======================================
 
-:Date: 2015-02
-:Author: Toon Nolten
-:Contact: <toon.nolten@student.kuleuven.be>
-
-
 Wat zijn dependent types?
 =========================
 
