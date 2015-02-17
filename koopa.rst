@@ -260,6 +260,8 @@ Met als fout:
     | when checking that the expression p (f 1) (f 1) ↠⟨ back ⟩ [] has
     | type Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
 
+--------------------
+
 Dit was een heel beperkt voorbeeld van wat we kunnen doen met dependent types.
 Momenteel zijn er nog geen performante programmeertalen die dependent types
 hebben, maar in de toekomst wordt het belangrijker om geverifiëerde code te
