@@ -187,14 +187,14 @@ Hier is hetzelfde pad herhaald waar de eindpositie impliciet is:
     red_nopath_two = p (f 1) (f 1) ↠⟨ back ⟩ []
 
 Deze keer maakt de fout wel duidelijk dat een rode Koopa Troopa geen muur in
-kan lopen, in figuur :num:`fig-red` is dit aangeduid met een omcirkelde *2*:
+kan lopen, in figuur :num:`fig-red` is dit aangeduid met een ⓶:
     | gas != solid of type Material
     | when checking that the expression p (f 1) (f 1) ↠⟨ back ⟩ [] has
     | type Path (Red KT) (p (f 1) (f 1)) (p (f 0) (f 1))
 
 Nu de belangrijkste test nog, een rode Koopa Troopa zou niet van een platform
 af mogen kunnen lopen, in figuur :num:`fig-red` is dit aangeduid met een
-omcirkelde *1*:
+⓵:
 
 .. code-block:: agda
     red_nopath_three : Path (Red KT) (p (f 4) (f 1)) (p (f 5) (f 1))
@@ -254,7 +254,7 @@ aangeduid met een omcirkelde *1* springt de Koopa Troopa van een platform af:
 
 Een groene Koopa Troopa kan dus wel degelijk van platforms afspringen.
 Het laatste pad laat nog zien dat groene Koopa Troopas nog steeds niet in
-muren kunnen lopen, in figuur :num:`fig-green` aangeduid met een omcirkelde *2*:
+muren kunnen lopen, in figuur :num:`fig-green` aangeduid met een ⓶:
 
 .. code-block:: agda
     green_nopath_one : Path (Green KT) (p (f 1) (f 1)) (p (f 0) (f 1))
