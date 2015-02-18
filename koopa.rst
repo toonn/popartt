@@ -14,7 +14,7 @@ gebracht worden zonder dat alle typechecks slagen.
 Programma's in dynamisch getypeerde talen daarentegen doen gewoon hun ding
 tot er at runtime een typefout optreedt.
 Dit klinkt natuurlijk goed, het programma kan werken ook al is het technisch
-gezien niet helemaal juist maar de developer is vaak te ver verwijdert van zo'n
+gezien niet helemaal juist maar de developer is vaak te ver verwijderd van zo'n
 fout at runtime om ze gemakkelijk te kunnen oplossen.
 In de praktijk wordt dit opgelost met uitgebreide testsuites maar zelfs dan
 is er eigenlijk nooit de garantie dat het programma volledig juist is,
@@ -67,10 +67,10 @@ Die "schildpadden" zijn eigenlijk Koopa Troopas en ze komen in verschillende
 kleuren en vormen voor.
 Ik ga het hebben over de rode en de groene varianten.
 De groene Koopa Troopas zijn tevens de bekendste, ze wandelen de hele tijd
-in dezelfde richting waarbij ze van platforms afspringen zonder problemen
+in dezelfde richting waarbij ze van platforms afspringen zonder problemen,
 in tegenstelling tot hun rode variant, deze draaien om als ze aan het einde
 van een platform komen [#koopa]_, beide keren ze wanneer ze een muur tegenkomen.
-De mariospellen en zijn ook gekend vanwege de vele glitches [#glitch]_ die
+De Mariospellen zijn ook gekend vanwege de vele glitches [#glitch]_ die
 erin voorkomen, deze worden veroorzaakt door fouten in het spelprogramma.
 Fouten die met statische verificatie vermeden zouden kunnen worden.
 
@@ -302,9 +302,8 @@ kunnen schrijven en dependent types bieden hier een oplossing.
 .. [#glitch] In dit filmpje is te zien hoe iemand een fout in de code voor
              Koopa Troopas uitbuit om over de vlag aan het einde van het eerste
              level te springen: http://youtu.be/dzlmNdP-ApU
-.. [#github] Voor zij die willen nagaan dat wat ik hier vertel geen gebakken
-             lucht is; de code zowel voor het voorbeeld als voor dit artikel is
-             hier beschikbaar: https://github.com/toonn/popartt
+.. [#github] Voor zij die geïnteresseerd zijn, de volledige code voor het
+             voorbeeld is hier beschikbaar: https://github.com/toonn/popartt
 .. [#adt] Haskell heeft algebraic data types, dit is een veralgemening daarvan.
 .. [#kind] In type theory is dit normaal gekend als *kind* (* in Haskell).
            Als kind het type van een type is, wat is dan het type van een kind?
