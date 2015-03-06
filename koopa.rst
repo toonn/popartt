@@ -5,31 +5,34 @@
 Wat zijn dependent types?
 =========================
 
-De meeste programmeertalen hebben types, e.g. voor gehele getallen,
+De meeste programmeertalen hebben types, bijvoorbeeld voor gehele getallen en
 voor vlottende-komma getallen.
 Zulk een systeem kan ofwel sterk (statisch) ofwel zwak (dynamisch)
 getypeerd zijn.
-Programma's in statisch getypeerde talen kunnen niet in een bruikbare vorm
-gebracht worden zonder dat alle typechecks slagen.
+Programma's in statisch getypeerde talen kunnen niet gecompileerd worden
+zonder dat alle typechecks slagen.
 Programma's in dynamisch getypeerde talen daarentegen doen gewoon hun ding
 tot er at runtime een typefout optreedt.
-Dit klinkt natuurlijk goed, het programma kan werken ook al is het technisch
-gezien niet helemaal juist maar de developer is vaak te ver verwijderd van zo'n
+Dit klinkt natuurlijk goed: het programma kan werken, ook al is het technisch
+gezien niet helemaal juist.
+Maar de developer is vaak te ver verwijderd van zo'n
 fout at runtime om ze gemakkelijk te kunnen oplossen.
-In de praktijk wordt dit opgelost met uitgebreide testsuites maar zelfs dan
-is er eigenlijk nooit de garantie dat het programma volledig juist is,
-we kunnen immers niet alle mogelijke combinaties van invoer nagaan.
+In de praktijk wordt dit opgelost met uitgebreide testsuites, maar zelfs dan
+is er eigenlijk nooit de garantie dat het programma volledig juist is.
+We kunnen immers niet alle mogelijke combinaties van invoer nagaan.
 
-Een voorbeeld van een statisch typesysteem is het typesysteem van Java maar
-ook Haskell heeft statische types ook al moeten we ze niet altijd schrijven
-dankzij de type inference in het Hindley-Milner systeem.
+Een voorbeeld van een statisch typesysteem is het typesysteem van Java.
+Ook Haskell heeft statische types, ook al moeten we ze niet altijd schrijven
+dankzij de type inferentie in het Hindley-Milner systeem.
 Dependent types zijn een andere vorm van statische types.
-Dit zijn types die kunnen afhangen van waardes (at runtime), e.g. de head
-functie [#head]_ is meestal onveilig, ze mag eigenlijk niet toegepast worden
-op een lege lijst, in een dependently typed taal kunnen we de lengte van
-lijsten bij in hun type opnemen en dan kunnen we voor de head functie
-opleggen dat ze enkel werkt op lijsten met een lengte verschillend van 0,
-dit soort lijsten noemt men gewoonlijk vectors.
+Dit zijn types die kunnen afhangen van waardes (at runtime), bijvoorbeeld
+de head functie [#head]_ is meestal onveilig: ze mag eigenlijk niet toegepast
+worden op een lege lijst.
+In een dependently typed taal kunnen we de lengte van lijsten bij in hun
+type opnemen.
+Dan kunnen we voor de head functie opleggen dat ze enkel werkt op lijsten met
+een lengte verschillend van 0.
+Dit soort lijsten noemt men gewoonlijk vectors.
 Dit voorbeeld is hieronder uitgewerkt in de taal Agda [#agda]_:
 
     .. code-block:: agda
@@ -42,14 +45,14 @@ Dit voorbeeld is hieronder uitgewerkt in de taal Agda [#agda]_:
         head (x ⸬ xs) = x 
 
 Zoals we kunnen zien in het type van de head functie, werkt deze voor eender
-welke vector met lengte *suc n*, de opvolger van een willekeurig natuurlijk
-getal is altijd groter dan 0, dus lege vectors zijn niet toegelaten als
-argument van de head functie.
+welke vector met lengte *suc n*.
+De opvolger van een willekeurig natuurlijk getal is altijd groter dan 0,
+dus lege vectors zijn niet toegelaten als argument van de head functie.
 Wat voor belang heeft dit nu?
 In programma's met een onveilige head functie treedt er een fout op at runtime
 wanneer ze wordt toegepast op een lege lijst.
-Deze fout moet overal waar de functie gebruikt wordt, opgevangen worden anders
-kan het programma crashen.
+Deze fout moet overal waar de functie gebruikt wordt, opgevangen worden.
+Anders kan het programma crashen.
 In een taal met dependent types kan je ervoor kiezen om statisch te garanderen
 dat dit soort fouten zich nooit zal voordoen.
 De prijs die je hiervoor betaalt is dat je types meer verboos worden.
@@ -66,10 +69,11 @@ te redden van Bowser.
 Die "schildpadden" zijn eigenlijk Koopa Troopas en ze komen in verschillende
 kleuren en vormen voor.
 Ik ga het hebben over de rode en de groene varianten.
-De groene Koopa Troopas zijn tevens de bekendste, ze wandelen de hele tijd
-in dezelfde richting waarbij ze van platforms afspringen zonder problemen,
-in tegenstelling tot hun rode variant, deze draaien om als ze aan het einde
-van een platform komen [#koopa]_, beide keren ze wanneer ze een muur tegenkomen.
+De groene Koopa Troopas zijn tevens de bekendste.
+Ze wandelen de hele tijd in dezelfde richting waarbij ze van platforms
+afspringen zonder problemen, in tegenstelling tot hun rode variant.
+Deze draaien om als ze aan het einde van een platform komen [#koopa]_.
+Beide keren ze wanneer ze een muur tegenkomen.
 De Mariospellen zijn ook gekend vanwege de vele glitches [#glitch]_ die
 erin voorkomen, deze worden veroorzaakt door fouten in het spelprogramma.
 Fouten die met statische verificatie vermeden zouden kunnen worden.
@@ -88,25 +92,28 @@ van de oplossing is [#github]_:
           _↠⟨_⟩_ : {q r : Position} → (p : Position) → q follows p ⟨ c ⟩
                      → (qs : Path Koopa q r) → Path Koopa p r
 
-Dit is een data declaratie, meer bepaald van een generalized algebraic
-data type, dit is een manier om een nieuw type te specifiëren [#adt]_.
-Na het woord *data* geven we de naam van het type, in dit geval *Path*,
-daarna komen een aantal parameters.
+Dit is een data declaratie, meer bepaald van een inductive family [#induct]_.
+Inductive family's zijn een manier om een nieuw type te specifiëren [#adt]_.
+Na het woord *data* geven we de naam van het type, in dit geval *Path*.
+Daarna komen een aantal parameters.
 Een algebraic data type lijkt op een een functie op het niveau van types,
 dat is hier duidelijk te zien.
-Na de dubbelepunt komt het type van het voorgaande stuk, hier het functie type
-*Position → Position → Set*, dus *Path* geparametriseerd met een *Color* en
-een *KoopaTroopa* is een functie die twee *Position* argumenten nodig heeft
+Na de dubbelepunt komt het type van het voorgaande stuk, hier het functietype
+*Position → Position → Set*.
+*Path* geparametriseerd met een *Color* en een *KoopaTroopa* is een functie
+die twee *Position* argumenten nodig heeft
 en dan een resultaat van het type *Set* geeft.
 *Set* is in Agda het type van types [#kind]_, dus het resultaat van *Path* met
-de juiste argumenten is een type, een concreet voorbeeld:
-*Path Red KT (0,0) (1, 0)*, waar *(0,0)* en *(1,0)* representaties zijn van
-posities, zou een pad zijn voor een rode Koopa Troopa van *(0,0)* naar *(1,0)*.
+de juiste argumenten is een type.
+Een concreet voorbeeld: *Path Red KT (0,0) (1, 0)*, waar *(0,0)* en *(1,0)*
+representaties zijn van posities, zou een pad zijn voor een rode Koopa Troopa
+van *(0,0)* naar *(1,0)*.
 
-Een type is gewoonlijk niet nuttig als we er geen elementen van kunnen maken,
-daarom zijn er meestal een aantal constructors voor gedefinieerd.
-*[]* maakt een leeg pad aan voor een Koopa Troopa van een positie [#positie]_
-naar diezelfde positie, een pad zonder stappen leid naar nergens.
+Een type is gewoonlijk niet nuttig als we er geen elementen van kunnen maken.
+Daarom zijn er meestal een aantal constructors voor gedefinieerd.
+De constructor *[]* maakt een leeg pad aan voor een Koopa Troopa van een
+positie [#positie]_ naar diezelfde positie, een pad zonder stappen leidt naar
+nergens.
 De andere constructor heeft als (expliciete) argumenten: een positie,
 een bewijs dat de eerste positie van een pad mag volgen op die positie voor
 een bepaalde kleur van Koopa Troopa en een pad vertrekkend van de juiste
@@ -304,7 +311,13 @@ kunnen schrijven en dependent types bieden hier een oplossing.
              level te springen: http://youtu.be/dzlmNdP-ApU
 .. [#github] Voor zij die geïnteresseerd zijn, de volledige code voor het
              voorbeeld is hier beschikbaar: https://github.com/toonn/popartt
-.. [#adt] Haskell heeft algebraic data types, dit is een veralgemening daarvan.
+.. [#induct] Denk als voorbeeld aan de definitie van de natuurlijke getallen:
+             0 is een natuurlijk getal en de opvolger van een natuurlijk getal
+             is een natuurlijk getal.
+             Hiermee zijn de natuurlijke getallen volledig gedefinieerd.
+.. [#adt] Haskell heeft algebraic data types, inductive families zijn algemener.
+          GHC heeft ook een generalized algebraic data type extensie die
+          gelijkaardig is aan inductive families.
 .. [#kind] In type theory is dit normaal gekend als *kind* (* in Haskell).
            Als kind het type van een type is, wat is dan het type van een kind?
            In Agda is het type van een type *Set*, wat een afkorting is voor
